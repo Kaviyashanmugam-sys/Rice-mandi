@@ -1,0 +1,168 @@
+{
+  "version": "6.1",
+  "screens": [
+    {
+      "id": "CHECKOUT",
+      "title": "Checkout Details",
+      "terminal": false,
+      "success": false,
+      "data": {
+        "cart_summary": {
+          "type": "string",
+          "__example__": "• Ponni Rice × 5 kg — ₹350\n• Toor Dal × 1 kg — ₹150"
+        },
+        "cart_total": {
+          "type": "string",
+          "__example__": "₹500"
+        },
+        "delivery_charge": {
+          "type": "string",
+          "__example__": "FREE 🎉"
+        },
+        "grand_total": {
+          "type": "string",
+          "__example__": "₹500"
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "Form",
+            "name": "checkout_form",
+            "children": [
+
+              {
+                "type": "TextHeading",
+                "text": "🛒 Order Summary"
+              },
+              {
+                "type": "TextBody",
+                "text": "${data.cart_summary}"
+              },
+              {
+                "type": "TextCaption",
+                "text": "🚚 Delivery: ${data.delivery_charge}     |     Total: ${data.grand_total}"
+              },
+
+              {
+                "type": "TextHeading",
+                "text": "📋 Your Details"
+              },
+
+              {
+                "type": "TextInput",
+                "name": "customer_name",
+                "label": "Your Name",
+                "input-type": "text",
+                "required": true,
+                "min-chars": 2,
+                "max-chars": 60,
+                "helper-text": "உங்கள் பெயர் / Your full name"
+              },
+
+              {
+                "type": "TextInput",
+                "name": "phone_number",
+                "label": "Phone Number",
+                "input-type": "phone",
+                "required": true,
+                "min-chars": 10,
+                "max-chars": 13,
+                "helper-text": "10-digit mobile number (e.g. 9876543210)"
+              },
+
+              {
+                "type": "TextArea",
+                "name": "delivery_address",
+                "label": "Delivery Address",
+                "required": true,
+                "min-chars": 10,
+                "max-chars": 300,
+                "helper-text": "Door No., Street, Area, City, Pincode"
+              },
+
+              {
+                "type": "TextHeading",
+                "text": "💳 Payment Method"
+              },
+
+              {
+                "type": "RadioButtonsGroup",
+                "name": "payment_method",
+                "label": "Choose payment method",
+                "required": true,
+                "data-source": [
+                  { "id": "UPI",  "title": "📱 UPI / QR Code",      "description": "Pay via GPay, PhonePe, Paytm" },
+                  { "id": "COD",  "title": "💵 Cash on Delivery",   "description": "Pay when order is delivered" },
+                  { "id": "BANK", "title": "🏦 Bank Transfer",      "description": "NEFT / IMPS to our account" }
+                ]
+              },
+
+              {
+                "type": "Footer",
+                "label": "Place Order",
+                "on-click-action": {
+                  "name": "data_exchange",
+                  "payload": {
+                    "customer_name":     "${form.customer_name}",
+                    "phone_number":      "${form.phone_number}",
+                    "delivery_address":  "${form.delivery_address}",
+                    "payment_method":    "${form.payment_method}"
+                  }
+                }
+              }
+
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "ORDER_CONFIRMED",
+      "title": "Order Confirmed!",
+      "terminal": true,
+      "success": true,
+      "data": {
+        "order_id": {
+          "type": "string",
+          "__example__": "RM1717001234"
+        },
+        "order_total": {
+          "type": "string",
+          "__example__": "₹500"
+        },
+        "estimated_delivery": {
+          "type": "string",
+          "__example__": "Today by 6 PM"
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "🎉 Order Placed!"
+          },
+          {
+            "type": "TextBody",
+            "text": "Order ID: #${data.order_id}\n\nTotal: ${data.order_total}\nEstimated Delivery: ${data.estimated_delivery}\n\nThank you for shopping with Rice Mandi! 🙏\nநன்றி!"
+          },
+          {
+            "type": "TextCaption",
+            "text": "You will receive a WhatsApp update when your order is out for delivery."
+          },
+          {
+            "type": "Footer",
+            "label": "Done",
+            "on-click-action": {
+              "name": "complete",
+              "payload": {}
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

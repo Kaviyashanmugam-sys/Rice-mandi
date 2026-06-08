@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: rice-mandi-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-secret}
+      MONGO_INITDB_DATABASE: rice-mandi-bot
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - rice-mandi-net
+    ports:
+      - "27017:27017"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rice-mandi-backend
+    restart: always
+    env_file: ./backend/.env
+    environment:
+      MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-secret}@mongodb:27017/rice-mandi-bot?authSource=admin
+      NODE_ENV: production
+    volumes:
+      - uploads:/app/uploads
+      - logs:/app/logs
+    depends_on:
+      - mongodb
+    networks:
+      - rice-mandi-net
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rice-mandi-frontend
+    restart: always
+    environment:
+      REACT_APP_API_URL: ${API_URL:-https://your-domain.com/api}
+    networks:
+      - rice-mandi-net
+    ports:
+      - "3000:80"
+
+volumes:
+  mongo_data:
+  uploads:
+  logs:
+
+networks:
+  rice-mandi-net:
+    driver: bridge
